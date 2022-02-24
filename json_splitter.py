@@ -3,6 +3,16 @@ import numpy as np
 import sys
 import rich
 
+def sort_remove_duplicates(file):
+    file.sort(key=lambda k: k["student_name"])
+    removal = []
+    for i in range(len(file)-1):
+        if file[i]["student_name"] == file[i+1]["student_name"]:
+            removal.append(i+1)
+    rich.print (f"\nForam encontrados {len(removal)} nomes repetidos. Eles já foram removidos :smiley:!")
+    for item in sorted(removal, reverse=True):
+        del file[item]
+
 if len(sys.argv) < 4:
     raise ValueError("Número de argumentos menor que 4")
     exit()
@@ -16,7 +26,7 @@ except FileNotFoundError:
 
 nomes = sys.argv[2:]
 num_parts = len(nomes)
-
+sort_remove_duplicates(file)
 split_list = np.array_split(file, num_parts)
 
 for index in range(num_parts):
