@@ -2,7 +2,7 @@ import json
 import numpy as np
 import sys
 import rich
-
+# remover duplicados
 def sort_remove_duplicates(file):
     file.sort(key=lambda k: k["student_name"])
     removal = []
@@ -14,6 +14,7 @@ def sort_remove_duplicates(file):
         del file[item]
     rich.print(f">>> Total final {len(file)} nomes!")
 
+#apenas duplicados
 def sort_only_duplicates(file):
     file.sort(key=lambda k: k["student_name"])
     final = []
