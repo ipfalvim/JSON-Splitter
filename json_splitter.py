@@ -2,27 +2,44 @@ import json
 import numpy as np
 import sys
 import rich
-# remover duplicados
+
+
+# remover duplicados (remove todos sem deixar nenhum)
 def sort_remove_duplicates(file):
     file.sort(key=lambda k: k["student_name"])
     removal = []
-    for i in range(len(file)-1):
-        if file[i]["student_name"] == file[i+1]["student_name"]:
-            removal.append(i+1)
-    rich.print (f"\n>>> Foram encontrados {len(removal)} nomes repetidos. Eles já foram removidos :smiley:!")
+    for i in range(len(file) - 1):
+        if file[i]["student_name"] == file[i + 1]["student_name"]:
+            if i not in removal:
+                removal.append(i)
+            removal.append(i + 1)
+    rich.print(
+        f"\n>>> Foram encontrados {len(removal)} nomes repetidos. Eles já foram removidos :smiley:!"  # noqa
+    )
     for item in sorted(removal, reverse=True):
-        del file[item]
+        try:
+            del file[item]
+        except IndexError:
+            pass
     rich.print(f">>> Total final {len(file)} nomes!")
 
-#apenas duplicados
+
+# apenas duplicados
 def sort_only_duplicates(file):
     file.sort(key=lambda k: k["student_name"])
     final = []
-    for i in range(len(file)-1):
-        if file[i]["student_name"] == file[i+1]["student_name"]:
-            final.append(i+1)
-    rich.print (f"\n>>> Foram encontrados {len(final)} nomes repetidos. Eles já foram mergeados :smiley:!")
-    file = final.copy()
+
+    for i in range(len(file) - 1):
+        if (
+            file[i]["student_name"] == file[i + 1]["student_name"]
+            and file[i] not in final
+        ):
+            final.append(file[i + 1])
+    rich.print(
+        f"\n>>> Foram encontrados {len(final)} nomes repetidos. Eles já foram mergeados :smiley:!"  # noqa
+    )
+    file.clear()
+    file.extend(final)
 
 
 if len(sys.argv) < 3:
@@ -38,8 +55,14 @@ except FileNotFoundError:
 
 nomes = sys.argv[2:]
 num_parts = len(nomes)
+
+# #######################################################################
+# Estas duas linhas abaixo devem ser descomentadas conforme
+# seja necessário remover duplicados ou manter apenas os duplicados noqa
+# #######################################################################
+
 # sort_remove_duplicates(file)
-sort_only_duplicates(file)
+# sort_only_duplicates(file)
 split_list = np.array_split(file, num_parts)
 
 for index in range(num_parts):
