@@ -3,6 +3,12 @@ import numpy as np
 import sys
 import rich
 
+# Alterar o campo "student_email" para "email"
+def validate_email(file: list):
+    for student in file:
+        if "email" not in student and "student_email" in student:
+            student["email"] = student.pop("student_email", None)
+
 
 # remover duplicados (remove todos sem deixar nenhum)
 def sort_remove_duplicates(file):
@@ -52,7 +58,7 @@ try:
 except FileNotFoundError:
     raise FileNotFoundError(f"Arquivo JSON --> {sys.argv[1]} base inválido!")
     exit()
-
+validate_email(file)
 nomes = sys.argv[2:]
 num_parts = len(nomes)
 
